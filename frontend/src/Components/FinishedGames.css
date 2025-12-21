@@ -1,0 +1,144 @@
+/* Finished Games Section */
+.finished-games-section {
+  position: relative;
+  /* Add horizontal padding so cards don't touch viewport edges */
+  padding: 60px 4rem; /* top/bottom 60px, left/right ~64px */
+}
+
+/* Background gradient effect (gold/red, subtle) */
+.finished-games-section::before {
+  content: '';
+  position: absolute;
+  top: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 640px;
+  height: 640px;
+  background: radial-gradient(circle, rgba(245,197,66,0.12) 0%, rgba(255,109,25,0.04) 40%, transparent 75%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(36px);
+}
+
+/* Section Title Styling */
+.hologram-title {
+  position: relative;
+  letter-spacing: 2px;
+  /* plain title: no neon animation */
+}
+
+/* Games Grid - Responsive */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* larger min card width to enlarge cards */
+  gap: 36px; /* slightly larger gap */
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 36px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .games-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 36px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .games-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 36px;
+  }
+}
+
+/* Game Card Wrapper */
+.game-card-wrapper {
+  height: 100%;
+  min-height: 300px; /* increased so cards appear larger/enlarged */
+  position: relative;
+}
+
+.game-card-wrapper a {
+  display: block;
+  height: 100%;
+  text-decoration: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .games-grid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  .hologram-title {
+    font-size: 2.5rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .games-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+  }
+
+  .hologram-title {
+    font-size: 2rem !important;
+  }
+
+  .finished-games-section {
+    /* smaller horizontal padding on very small screens */
+    padding: 40px 1rem;
+  }
+
+  .game-card-wrapper {
+    min-height: 240px;
+  }
+}
+
+/* Stagger animation for cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.game-card-wrapper {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.game-card-wrapper:nth-child(1) { animation-delay: 0.05s; }
+.game-card-wrapper:nth-child(2) { animation-delay: 0.10s; }
+.game-card-wrapper:nth-child(3) { animation-delay: 0.15s; }
+.game-card-wrapper:nth-child(4) { animation-delay: 0.20s; }
+.game-card-wrapper:nth-child(5) { animation-delay: 0.25s; }
+.game-card-wrapper:nth-child(6) { animation-delay: 0.10s; }
+.game-card-wrapper:nth-child(7) { animation-delay: 0.15s; }
+.game-card-wrapper:nth-child(8) { animation-delay: 0.20s; }
+.game-card-wrapper:nth-child(9) { animation-delay: 0.25s; }
+.game-card-wrapper:nth-child(10) { animation-delay: 0.30s; }
+
+/* Section bottom accent styling */
+.finished-games-section > div:last-child {
+  animation: fadeInUp 1s ease-out 1.5s forwards;
+  opacity: 0;
+}
+
+/* No flashing neon: keep the title stable */

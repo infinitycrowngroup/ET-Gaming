@@ -1,0 +1,289 @@
+/* Root and layout - full bleed for gaming/hero backgrounds */
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app-inner {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  width: 100%;
+}
+
+.logo {
+  height: 3.2rem;
+  padding: 0.5rem;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.card { padding: 2em; }
+
+.read-the-docs { color: #888; }
+
+/* Neon & glass utilities */
+:root{
+  --bg-dark: #05060a;
+  --neon-red: #ff3b30; /* vivid red */
+  --neon-gold: #f5c542; /* gold */
+  --neon-accent: #ff7a5a;
+}
+
+body {
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.08), transparent),
+              radial-gradient(800px 400px at 90% 80%, rgba(3,105,161,0.06), transparent),
+              var(--bg-dark);
+  color: #e6eef8;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.neon-title {
+  background: linear-gradient(90deg, var(--neon-red), var(--neon-gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.4; /* stronger safeguard against descender clipping */
+}
+
+.glass {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px);
+}
+
+.neon-glow {
+  box-shadow: 0 8px 30px rgba(124,58,237,0.12), 0 2px 8px rgba(6,182,212,0.06);
+}
+
+/* Home hero */
+.home-hero {
+  min-height: calc(100vh - 96px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/assets/kartous.jpg');
+  background-size: cover;
+  background-position: center center;
+  position: relative;
+  color: #eaf6ff;
+}
+.home-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));
+}
+.home-hero .hero-inner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+.home-logo {
+  width: 160px;
+  height: 160px;
+  border-radius: 9999px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255,77,182,0.08), rgba(124,58,237,0.06));
+  box-shadow: 0 10px 40px rgba(124,58,237,0.12);
+  border: 2px solid rgba(255,255,255,0.04);
+}
+.home-title {
+  font-size: 2.2rem;
+  line-height: 1.4;
+  margin-bottom: 3.5rem; /* increase spacing so logo doesn't overlap */
+  font-weight: 900;
+  text-transform: none;
+  position: relative;
+  z-index: 3; /* keep title above logo if they ever overlap */
+}
+
+.home-line, .home-line-top, .home-line-center, .home-line-brand { line-height: 1.4; }
+.home-line { display: block; }
+.home-line-top { font-size: 2.1rem; margin-bottom: 0.25rem; }
+.home-line-center { font-size: 2.4rem; letter-spacing: 6px; margin: 0.15rem 0; }
+.home-line-brand { font-size: 2.6rem; font-weight: 900; margin-top: 0.25rem; }
+
+@media (min-width: 768px) {
+  .home-title { font-size: 3rem; }
+  .home-line-top { font-size: 2.6rem; }
+  .home-line-center { font-size: 3.2rem; letter-spacing: 10px; }
+  .home-line-brand { font-size: 3.6rem; }
+}
+.home-logo {
+  width: 160px;
+  height: 160px;
+  border-radius: 9999px;
+  overflow: hidden;
+  display: block;
+  margin: -3rem auto 0; /* slightly closer to the heading */
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255,59,48,0.06), rgba(245,197,66,0.04));
+  box-shadow: 0 18px 60px rgba(0,0,0,0.6);
+  border: 2px solid rgba(255,255,255,0.04);
+  position: relative;
+  z-index: 2;
+}
+
+.site-nav .brand {
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+.site-underline {
+  height: 2px;
+  display: block;
+  background: linear-gradient(90deg, var(--neon-red), var(--neon-gold));
+}
+
+.btn-neon {
+  background: linear-gradient(90deg, var(--neon-red), var(--neon-gold));
+  color: black;
+  font-weight: 700;
+  box-shadow: 0 8px 28px rgba(245,197,66,0.10);
+}
+
+.footer-glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+/* About Page - Hero Section */
+.about-hero {
+  background: linear-gradient(135deg, rgba(255,59,48,0.06), rgba(245,197,66,0.04)),
+              radial-gradient(800px 400px at 50% 50%, rgba(255,59,48,0.04), transparent);
+  border-bottom: 1px solid rgba(255,59,48,0.1);
+}
+
+/* Timeline Styles */
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  animation: slideInUp 0.6s ease-out;
+}
+
+.timeline-marker {
+  position: relative;
+  flex-shrink: 0;
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timeline-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff3b30, #f5c542);
+  border: 3px solid #05060a;
+  box-shadow: 0 0 20px rgba(255,59,48,0.4), 0 0 40px rgba(245,197,66,0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-line {
+  flex-grow: 1;
+  width: 3px;
+  background: linear-gradient(180deg, rgba(255,59,48,0.3), transparent);
+  margin-top: 0.5rem;
+}
+
+.timeline-content {
+  flex: 1;
+  padding: 1.5rem !important;
+  border-left: 3px solid rgba(255,59,48,0.3);
+  transition: all 0.3s ease;
+  transform-origin: left;
+}
+
+.timeline-content:hover {
+  border-left-color: rgba(245,197,66,0.6);
+  box-shadow: 0 12px 40px rgba(255,59,48,0.15) !important;
+  transform: translateX(8px);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stats cards animation */
+.glass:hover {
+  border-color: rgba(255,59,48,0.2);
+}
+
+/* Mission cards with red/gold accents */
+.mission-card {
+  background: linear-gradient(135deg, rgba(255,59,48,0.05), rgba(245,197,66,0.02));
+  border: 1px solid rgba(255,59,48,0.15);
+  transition: all 0.3s ease;
+}
+
+/* Global fix for clipped descenders (letters like g, y appearing half-hidden).
+   Apply a safe minimum line-height and allow overflow for large headings and
+   common utility heading classes so they are not clipped by parent containers. */
+h1, h2, h3, h4, h5, h6,
+.neon-title,
+.home-line, .home-line-top, .home-line-center, .home-line-brand,
+.text-3xl, .text-4xl, .text-5xl, .text-6xl {
+  line-height: 1.25 !important;
+  overflow: visible !important;
+}
+
+/* Ensure section containers generally don't clip their children by default. */
+.section-separated,
+.container,
+.hero-inner {
+  overflow: visible;
+}
+
+/* Targeted safeguard for page headings: make them inline-block and add padding-bottom
+   so descenders (g, y, j, p, q) are not visually cut off even if an ancestor has
+   a restrictive height or transform. This is intentionally small and non-invasive. */
+.section-separated h1,
+.home-title,
+.neon-title,
+.variant-community-hero h1,
+.about-hero h1 {
+  display: inline-block;
+  padding-bottom: 0.28em; /* room for descenders */
+  box-sizing: content-box;
+  line-height: 1.4 !important;
+  overflow: visible !important;
+}
+
+

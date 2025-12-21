@@ -1,0 +1,54 @@
+/* About page section separators and per-section subtle backgrounds */
+.section-separated {
+  position: relative;
+  /* keep existing spacing from section elements; only provide subtle background tints */
+  z-index: 0;
+}
+
+.section-separated > * {
+  /* keep content above background */
+  position: relative;
+  z-index: 2;
+}
+
+/* Per-section subtle backgrounds to visually separate areas (low opacity so existing styles stay visible) */
+.variant-hero { background: linear-gradient(180deg, rgba(255,59,48,0.06), rgba(245,197,66,0.04)); }
+.variant-stats { background: linear-gradient(180deg, rgba(6,182,212,0.06), rgba(168,85,247,0.035)); }
+.variant-timeline { background: linear-gradient(180deg, rgba(99,102,241,0.06), rgba(16,185,129,0.035)); }
+.variant-finishedgames { background: linear-gradient(180deg, rgba(234,88,12,0.07), rgba(249,115,22,0.035)); }
+.variant-team { background: linear-gradient(180deg, rgba(99,102,241,0.055), rgba(6,182,212,0.035)); }
+
+/* Timeline visual enhancements (non-destructive) */
+.variant-timeline .timeline-item { gap: 2.25rem; }
+.variant-timeline .timeline-marker { width: 68px; }
+.variant-timeline .timeline-dot { width: 22px; height: 22px; box-shadow: 0 0 26px rgba(255,59,48,0.45), 0 0 50px rgba(245,197,66,0.18); }
+.variant-timeline .timeline-content {
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, rgba(5,6,10,0.18), rgba(10,12,20,0.22));
+}
+
+/* vertical connector line for timeline markers */
+.variant-timeline .timeline-marker {
+  position: relative;
+}
+.variant-timeline .timeline-line {
+  width: 4px;
+  height: calc(100% + 1.25rem);
+  /* golden connector gradient */
+  background: linear-gradient(180deg, rgba(245,197,66,0.95), rgba(255,223,100,0.9));
+  margin: 6px auto 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 18px rgba(245,197,66,0.12);
+}
+
+/* subtle alternating tints for timeline entries to enhance readability */
+.variant-timeline .timeline-item:nth-child(odd) .timeline-content {
+  background: linear-gradient(180deg, rgba(255,59,48,0.02), rgba(245,197,66,0.015));
+}
+.variant-timeline .timeline-item:nth-child(even) .timeline-content {
+  background: linear-gradient(180deg, rgba(6,182,212,0.02), rgba(168,85,247,0.01));
+}
+
+/* Keep transitions gentle */
+.section-separated,
+.section-separated .timeline-content { transition: background 0.35s ease, box-shadow 0.35s ease; }

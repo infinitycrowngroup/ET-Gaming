@@ -1,0 +1,176 @@
+/* Community Page Styling */
+
+/* Section separators and backgrounds */
+.section-separated {
+  position: relative;
+  z-index: 0;
+}
+
+.section-separated > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Per-section distinct background variants for Community */
+.variant-community-hero {
+  background: linear-gradient(180deg, rgba(139,92,246,0.06), rgba(6,182,212,0.04));
+}
+
+.variant-community-social {
+  background: linear-gradient(180deg, rgba(6,182,212,0.06), rgba(34,197,94,0.035));
+}
+
+.variant-community-games {
+  background: linear-gradient(180deg, rgba(34,197,94,0.06), rgba(59,130,246,0.035));
+}
+
+.variant-community-testimonials {
+  background: linear-gradient(180deg, rgba(59,130,246,0.06), rgba(168,85,247,0.035));
+}
+
+.variant-community-cta {
+  background: linear-gradient(180deg, rgba(168,85,247,0.06), rgba(139,92,246,0.035));
+}
+
+/* Community hero enhancements */
+.community-hero {
+  position: relative;
+  /* allow text descenders room instead of clipping */
+  overflow: visible;
+}
+
+.community-hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+  z-index: 0;
+}
+
+.community-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Smooth transitions */
+.section-separated {
+  transition: background 0.35s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .variant-community-hero h1 {
+    font-size: 2.5rem;
+  }
+}
+
+/* Game card styling */
+
+.game-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px) saturate(120%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 140px;
+  cursor: pointer;
+}
+
+.game-card:hover {
+  box-shadow: 0 22px 80px rgba(99,102,241,0.18);
+  transform: translateY(-6px) scale(1.03);
+}
+
+.game-icon {
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 6px 20px rgba(2,6,23,0.4) inset;
+  width: 64px;
+  height: 64px;
+  font-size: 1.5rem;
+}
+
+.game-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.badge {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  backdrop-filter: blur(4px);
+}
+
+.pop-bar {
+  background: linear-gradient(90deg, rgba(34,211,238,0.9), rgba(139,92,246,0.9));
+  box-shadow: 0 6px 18px rgba(99,102,241,0.18) inset;
+}
+
+/* small responsive tweaks */
+@media (max-width: 640px) {
+  .game-icon { width: 56px; height: 56px; font-size: 1.25rem; }
+  .game-card { padding: 1rem; }
+}
+
+/* Simple Square Card Grid */
+.game-square-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 220px;
+}
+
+.game-square-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+
+.game-square-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transition: transform 0.22s ease;
+}
+
+.game-square-card:hover .game-square-image {
+  transform: scale(1.05);
+}
+
+.game-square-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.game-square-title {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.2px;
+  transition: color 0.2s ease;
+}
+
+.game-square-card:hover .game-square-title {
+  color: #06b6d4;
+}
