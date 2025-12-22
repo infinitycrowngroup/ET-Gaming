@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 import smtplib
+import socket
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
@@ -56,24 +57,17 @@ def contact():
             logger.info(f"[TEST MODE] Skipping SMTP. Email from {name} ({email}): {message}")
             return jsonify({'success': True, 'message': 'Test email simulated'}), 200
 
-        # SMTP Config
-        smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
-        smtp_port_str = os.getenv('SMTP_PORT', '587')
-        smtp_user = os.getenv('SMTP_USER')
-        smtp_pass = os.getenv('SMTP_PASS')
+        # Brevo SMTP Config
+        smtp_host = 'smtp-relay.brevo.com'
+        smtp_port = 587
+        smtp_user = os.getenv('BREVO_SMTP_USER')
+        smtp_pass = os.getenv('BREVO_SMTP_KEY')
         recipient = os.getenv('CONTACT_EMAIL_TO')
-        sender = os.getenv('CONTACT_EMAIL_FROM') or smtp_user
-
-        # Port validation
-        try:
-            smtp_port = int(smtp_port_str)
-        except ValueError:
-            logger.error(f"Invalid SMTP_PORT: {smtp_port_str}")
-            return jsonify({'success': False, 'error': 'Server configuration error'}), 500
+        sender = smtp_user  # Brevo requires sender to match auth user or verified sender
 
         # Credential Check
-        if not all([smtp_host, smtp_user, smtp_pass, recipient]):
-            logger.error("Missing SMTP credentials in environment")
+        if not all([smtp_user, smtp_pass, recipient]):
+            logger.error("Missing Brevo credentials (BREVO_SMTP_USER/KEY) in environment")
             return jsonify({'success': False, 'error': 'Server email configuration is missing'}), 500
 
         # Construct Message
@@ -98,28 +92,44 @@ def contact():
         """
         msg.attach(MIMEText(body, 'plain'))
 
-        # Send Email with Specific Exception Handling
+        # Send Email via Brevo
         try:
-            server = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
-            server.starttls()  # Upgrade connection
-            server.login(smtp_user, smtp_pass)
-            server.send_message(msg)
-            server.quit()
-            
-            logger.info(f"Contact email successfully sent from {email}")
-            return jsonify({'success': True}), 200
+            # Try primary SMTP with STARTTLS (typical: port 587)
+            try:
+                server = smtplib.SMTP(smtp_host, smtp_port, timeout=30)
+                server.starttls()
+                server.login(smtp_user, smtp_pass)
+                server.send_message(msg)
+                server.quit()
+                logger.info(f"Brevo email successfully sent to {recipient} via STARTTLS:{smtp_host}:{smtp_port}")
+                return jsonify({'success': True, 'message': 'Email sent successfully'}), 200
 
-        except smtplib.SMTPAuthenticationError:
-            logger.error("SMTP Authentication Failed. Check username/app password.")
-            return jsonify({'success': False, 'error': 'Email server authentication failed'}), 500
-        except smtplib.SMTPConnectError:
-            logger.error("SMTP Connection Failed. Check host/port.")
-            return jsonify({'success': False, 'error': 'Could not connect to email server'}), 500
-        except smtplib.SMTPException as e:
-            logger.error(f"SMTP Error: {e}")
-            return jsonify({'success': False, 'error': 'Email sending failed'}), 500
+            except (smtplib.SMTPConnectError, socket.timeout, OSError) as conn_err:
+                logger.warning(f"Primary SMTP (STARTTLS) failed: {conn_err}. Trying SSL fallback (port 465).")
+                # Fallback to SMTPS on port 465
+                try:
+                    server = smtplib.SMTP_SSL(smtp_host, 465, timeout=30)
+                    server.login(smtp_user, smtp_pass)
+                    server.send_message(msg)
+                    server.quit()
+                    logger.info(f"Brevo email sent to {recipient} via SSL:{smtp_host}:465")
+                    return jsonify({'success': True, 'message': 'Email sent successfully'}), 200
+                except smtplib.SMTPAuthenticationError:
+                    logger.exception("SMTP Authentication Failed on SSL fallback.")
+                    return jsonify({'success': False, 'error': 'Email server authentication failed'}), 500
+                except Exception as ssl_err:
+                    logger.exception(f"SSL SMTP fallback failed: {ssl_err}")
+                    return jsonify({'success': False, 'error': 'Could not connect to email server (SSL fallback failed)'}), 500
+
+            except smtplib.SMTPAuthenticationError:
+                logger.exception("SMTP Authentication Failed. Check username/app password.")
+                return jsonify({'success': False, 'error': 'Email server authentication failed'}), 500
+            except smtplib.SMTPException as e:
+                logger.exception(f"SMTP Error: {e}")
+                return jsonify({'success': False, 'error': 'Email sending failed'}), 500
+
         except Exception as e:
-            logger.error(f"Unexpected Email Error: {e}")
+            logger.exception(f"Unexpected Email Error: {e}")
             return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
 
     except Exception as outer_e:

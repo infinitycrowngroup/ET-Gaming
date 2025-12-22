@@ -23,7 +23,7 @@ export default function Home() {
                   alt="ET Gaming Logo"
                   style={{ width: '100%', height: '100%', cursor: 'pointer' }}
                   loading="eager"
-                  fetchpriority="high"
+                  fetchPriority="high"
                   width="500"
                   height="500"
                 />

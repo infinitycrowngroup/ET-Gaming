@@ -4,49 +4,6 @@ import { Menu, X, Lock } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  // Check admin status on mount and periodically
-  useEffect(() => {
-    const check = async () => {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        setIsAdmin(false);
-        return;
-      }
-
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
-        const res = await fetch(`${apiUrl}/admin/verify`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: "check_if_admin_exists" }) // Placeholder logic
-        });
-        if (res.ok) {
-          const body = await res.json();
-          setIsAdmin(!!body.valid);
-        } else {
-          setIsAdmin(false);
-          localStorage.removeItem("adminToken");
-        }
-      } catch (e) {
-        setIsAdmin(false);
-      }
-    };
-
-    check();
-    const checkInterval = setInterval(check, 5000); // Re-check every 5 seconds
-
-    // Listen for storage changes (login/logout from other tabs)
-    const handleStorageChange = () => {
-      check();
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      clearInterval(checkInterval);
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
 
   return (
     <nav className="site-nav text-white sticky top-0 z-50 py-3">
@@ -85,27 +42,6 @@ export default function Navbar() {
               ></span>
             </Link>
           ))}
-          {/* Admin Link */}
-          {isAdmin && (
-            <Link
-              to="/admin"
-              className="relative group transition duration-300 flex items-center gap-1 text-yellow-400 font-bold"
-            >
-              <Lock size={18} />
-              Admin
-              <span
-                style={{
-                  bottom: '-4px',
-                  left: 0,
-                  height: '2px',
-                  width: '0',
-                  display: 'block',
-                  background: 'linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05))',
-                }}
-                className="group-hover:w-full transition-all duration-300"
-              ></span>
-            </Link>
-          )}
         </div>
 
         {/* Mobile Menu Button */}
