@@ -1,8 +1,5 @@
 from flask import Blueprint, request, jsonify
-import smtplib
-import socket
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
 import os
 import time
 import logging
@@ -17,6 +14,7 @@ logger = logging.getLogger(__name__)
 # Simple in-memory rate limiter: {ip_address: last_request_time}
 rate_limit_store = {}
 RATE_LIMIT_SECONDS = 60
+
 
 @main_bp.route('/contact', methods=['POST'])
 @cross_origin()
@@ -44,95 +42,81 @@ def contact():
         if not all([name, email, message]):
             return jsonify({'success': False, 'error': 'Missing required fields (name, email, message)'}), 400
     except Exception as e:
-        logger.error(f"Input validation error: {e}")
+        logger.exception(f"Input validation error: {e}")
         return jsonify({'success': False, 'error': 'Invalid request format'}), 400
 
-    # 3. Email Logic
+    # 3. Email Logic using Resend HTTP API
     try:
         # Load Env Vars Safely
         is_test_mode = os.getenv('EMAIL_TEST_MODE', 'False').lower() == 'true'
-        
+
         # Test Mode Check (Strict)
         if is_test_mode:
-            logger.info(f"[TEST MODE] Skipping SMTP. Email from {name} ({email}): {message}")
+            logger.info(f"[TEST MODE] Skipping Resend API. Email from {name} ({email}): {message}")
             return jsonify({'success': True, 'message': 'Test email simulated'}), 200
 
-        # Brevo SMTP Config
-        smtp_host = 'smtp-relay.brevo.com'
-        smtp_port = 587
-        smtp_user = os.getenv('BREVO_SMTP_USER')
-        smtp_pass = os.getenv('BREVO_SMTP_KEY')
+        resend_key = os.getenv('RESEND_API_KEY')
         recipient = os.getenv('CONTACT_EMAIL_TO')
-        sender = smtp_user  # Brevo requires sender to match auth user or verified sender
+        sender_env = os.getenv('CONTACT_EMAIL_FROM')
 
-        # Credential Check
-        if not all([smtp_user, smtp_pass, recipient]):
-            logger.error("Missing Brevo credentials (BREVO_SMTP_USER/KEY) in environment")
+        # Strict config checks: do NOT fallback sender to recipient
+        if not resend_key or not recipient or not sender_env:
+            logger.error("Missing Resend configuration: RESEND_API_KEY, CONTACT_EMAIL_FROM and/or CONTACT_EMAIL_TO not set")
             return jsonify({'success': False, 'error': 'Server email configuration is missing'}), 500
 
-        # Construct Message
-        msg = MIMEMultipart()
-        msg['From'] = sender
-        msg['To'] = recipient
-        msg['Subject'] = f"New Contact via ET Gaming: {name}"
+        # Validate sender format and enforce required sender
+        # Expected format: Display Name <local@domain>
+        import re
+        m = re.match(r"^\s*(.*?)\s*<\s*([^>\s]+@[^>\s]+)\s*>\s*$", sender_env)
+        if m:
+            display_name = m.group(1).strip()
+            sender_email = m.group(2).strip()
+        else:
+            # If user provided only an email, treat it as sender_email with no display name
+            sender_email = sender_env.strip()
+            display_name = ''
 
-        body = f"""
-        New Contact Message Received:
+        # Enforce the exact allowed sender local-part/domain to avoid accidental gmail fallback
+        REQUIRED_SENDER_EMAIL = 'onboarding@resend.dev'
+        if sender_email.lower() != REQUIRED_SENDER_EMAIL:
+            logger.error(f"Invalid CONTACT_EMAIL_FROM: found '{sender_env}'. Required sender email is '{REQUIRED_SENDER_EMAIL}'")
+            return jsonify({'success': False, 'error': f"CONTACT_EMAIL_FROM must be '{REQUIRED_SENDER_EMAIL}' (use 'ET Gaming <{REQUIRED_SENDER_EMAIL}>')"}), 500
 
-        Name: {name}
-        Email: {email}
-        Discord: {discord}
+        # Construct canonical from string
+        from_value = f"ET Gaming <{REQUIRED_SENDER_EMAIL}>"
 
-        Message:
-        --------------------------------------------------
-        {message}
-        --------------------------------------------------
-        
-        Sent from ET Gaming Website
-        """
-        msg.attach(MIMEText(body, 'plain'))
+        # Build the email body
+        body = f"New Contact Message Received:\n\nName: {name}\nEmail: {email}\nDiscord: {discord}\n\nMessage:\n--------------------------------------------------\n{message}\n--------------------------------------------------\n\nSent from ET Gaming Website"
 
-        # Send Email via Brevo
+        payload = {
+            "from": from_value,
+            "to": [recipient],
+            "subject": f"New Contact via ET Gaming: {name}",
+            "text": body
+        }
+
+        headers = {
+            'Authorization': f'Bearer {resend_key}',
+            'Content-Type': 'application/json'
+        }
+
+        # Debug log payload (safe): do not log API key
+        logger.debug("Resend payload prepared: from=%s to=%s subject=%s text=%s", from_value, payload['to'], payload['subject'], payload['text'][:200])
+
         try:
-            # Try primary SMTP with STARTTLS (typical: port 587)
-            try:
-                server = smtplib.SMTP(smtp_host, smtp_port, timeout=30)
-                server.starttls()
-                server.login(smtp_user, smtp_pass)
-                server.send_message(msg)
-                server.quit()
-                logger.info(f"Brevo email successfully sent to {recipient} via STARTTLS:{smtp_host}:{smtp_port}")
-                return jsonify({'success': True, 'message': 'Email sent successfully'}), 200
+            resp = requests.post('https://api.resend.com/emails', json=payload, headers=headers, timeout=15)
+        except requests.exceptions.RequestException as req_err:
+            logger.exception(f"Network error when calling Resend API: {req_err}")
+            return jsonify({'success': False, 'error': 'Failed to contact email service'}), 502
 
-            except (smtplib.SMTPConnectError, socket.timeout, OSError) as conn_err:
-                logger.warning(f"Primary SMTP (STARTTLS) failed: {conn_err}. Trying SSL fallback (port 465).")
-                # Fallback to SMTPS on port 465
-                try:
-                    server = smtplib.SMTP_SSL(smtp_host, 465, timeout=30)
-                    server.login(smtp_user, smtp_pass)
-                    server.send_message(msg)
-                    server.quit()
-                    logger.info(f"Brevo email sent to {recipient} via SSL:{smtp_host}:465")
-                    return jsonify({'success': True, 'message': 'Email sent successfully'}), 200
-                except smtplib.SMTPAuthenticationError:
-                    logger.exception("SMTP Authentication Failed on SSL fallback.")
-                    return jsonify({'success': False, 'error': 'Email server authentication failed'}), 500
-                except Exception as ssl_err:
-                    logger.exception(f"SSL SMTP fallback failed: {ssl_err}")
-                    return jsonify({'success': False, 'error': 'Could not connect to email server (SSL fallback failed)'}), 500
-
-            except smtplib.SMTPAuthenticationError:
-                logger.exception("SMTP Authentication Failed. Check username/app password.")
-                return jsonify({'success': False, 'error': 'Email server authentication failed'}), 500
-            except smtplib.SMTPException as e:
-                logger.exception(f"SMTP Error: {e}")
-                return jsonify({'success': False, 'error': 'Email sending failed'}), 500
-
-        except Exception as e:
-            logger.exception(f"Unexpected Email Error: {e}")
-            return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+        if resp.status_code in (200, 202):
+            logger.info(f"Resend accepted the message (status {resp.status_code})")
+            return jsonify({'success': True, 'message': 'Email sent successfully'}), 200
+        else:
+            logger.error(f"Resend API error: status={resp.status_code} body={resp.text}")
+            return jsonify({'success': False, 'error': 'Email service returned an error'}), 502
 
     except Exception as outer_e:
-        # Catch-all for any other unforeseen crash in the route
         logger.exception(f"Critical error in /contact route: {outer_e}")
         return jsonify({'success': False, 'error': 'Server encountered a critical error'}), 500
+
