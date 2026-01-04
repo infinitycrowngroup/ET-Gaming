@@ -1,5 +1,5 @@
 import React from "react";
-import "./PcSpecs.css";
+import "./PCSpecs.css";
 
 const SPECS = [
   { label: "CPU", value: "AMD Ryzen 5 7600" },
