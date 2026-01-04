@@ -1,14 +1,15 @@
 
 [build]
-  # Use npm ci but disable optional deps (optional native binaries can fail on Netlify)
-  command = "npm ci --prefix frontend --no-optional && npm run build --prefix frontend"
+  # Use `npm ci` (deterministic) without `--no-optional` so optional native binaries can be installed.
+  # Ensure package-lock.json was generated on Node 20 locally and committed so `npm ci` will reproduce the same install.
+  command = "npm ci --prefix frontend && npm run build --prefix frontend"
   publish = "frontend/dist"
 
 [build.environment]
   # Set Node version to 20 to match Vite and Netlify's supported versions
   NODE_VERSION = "20"
-  # Also set NPM_FLAGS as a fallback for the Netlify environment
-  NPM_FLAGS = "--no-optional"
+  # Do NOT disable optional deps here; we need platform-specific binaries for Rollup.
+  # Keep NODE_VERSION=20 so Netlify uses Node 20 runtime.
 
 [dev]
   framework = "vite"
