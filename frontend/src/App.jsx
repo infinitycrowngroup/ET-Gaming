@@ -2,14 +2,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
-import Home from "./Pages/Home";
+import Home from "./pages/Home";
 import "./App.css";
 import "./index.css";
 
 // Lazy Load Pages for Performance
-const About = lazy(() => import("./Pages/About"));
-const Community = lazy(() => import("./Pages/Community"));
-const Contact = lazy(() => import("./Pages/Contact"));
+const About = lazy(() => import("./pages/About"));
+const Community = lazy(() => import("./pages/Community"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 // Simple Loading Fallback
 const Loading = () => (
