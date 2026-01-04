@@ -1,9 +1,13 @@
+
 [build]
-  command = "npm ci --prefix frontend && npm run build --prefix frontend"
+  # Use npm ci but disable optional deps (optional native binaries can fail on Netlify)
+  command = "npm ci --prefix frontend --no-optional && npm run build --prefix frontend"
   publish = "frontend/dist"
 
 [build.environment]
-  NODE_VERSION = "18"
+  # Set Node version to 20 to match Vite and Netlify's supported versions
+  NODE_VERSION = "20"
+  # Also set NPM_FLAGS as a fallback for the Netlify environment
   NPM_FLAGS = "--no-optional"
 
 [dev]
