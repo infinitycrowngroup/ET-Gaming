@@ -1,15 +1,14 @@
 
 [build]
-  # Use `npm ci` (deterministic) without `--no-optional` so optional native binaries can be installed.
-  # Ensure package-lock.json was generated on Node 20 locally and committed so `npm ci` will reproduce the same install.
-  command = "npm ci --prefix frontend && npm run build --prefix frontend"
+  # Use a stable, proven build flow for a Vite app located in `frontend/`.
+  # We use `npm install` (not `npm ci`) to avoid requiring lockfile provenance
+  # in fresh setups; Netlify will run this in a Linux environment.
+  command = "npm install --prefix frontend && npm run build --prefix frontend"
   publish = "frontend/dist"
 
 [build.environment]
-  # Set Node version to 20 to match Vite and Netlify's supported versions
+  # Pin Node to Netlify's Node 20 runtime for Vite compatibility.
   NODE_VERSION = "20"
-  # Do NOT disable optional deps here; we need platform-specific binaries for Rollup.
-  # Keep NODE_VERSION=20 so Netlify uses Node 20 runtime.
 
 [dev]
   framework = "vite"
