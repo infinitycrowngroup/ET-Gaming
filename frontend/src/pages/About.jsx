@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import io from 'socket.io-client';
 import FinishedGames from "../Components/FinishedGames";
 import PCSpecs from "../Components/PCSpecs";
+import API_BASE from "../api/apiConfig";
 import "./About.css";
 
 const TIMELINE_EVENTS = [
@@ -74,7 +75,7 @@ export default function About() {
     let socket;
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
+      const apiUrl = API_BASE;
       socket = io(apiUrl, {
         // Remove 'transports' to allow automatic upgrade from polling (fixes ERR_CONNECTION_REFUSED)
         withCredentials: true,

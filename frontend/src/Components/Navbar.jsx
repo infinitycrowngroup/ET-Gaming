@@ -4,6 +4,8 @@ import { Menu, X, Lock } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  // Safe default until auth is implemented
+  const isAdmin = false;
 
   return (
     <nav className="site-nav text-white sticky top-0 z-50 py-3">
@@ -55,21 +57,23 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden mt-4 space-y-4 text-center text-lg font-medium">
-          <Link to="/" onClick={() => setIsOpen(false)} className="block w-full hover:text-green-400">Home</Link>
-          <Link to="/about" onClick={() => setIsOpen(false)} className="block w-full hover:text-blue-400">About</Link>
-          <Link to="/community" onClick={() => setIsOpen(false)} className="block w-full hover:text-yellow-400">Community</Link>
-          <Link to="/contact" onClick={() => setIsOpen(false)} className="block w-full hover:text-yellow-400">Contact</Link>
+        <div className="md:hidden mt-2">
+          <div className="mobile-menu bg-black/90 backdrop-blur-sm shadow-lg rounded-b-lg py-4 space-y-3 text-center text-lg font-medium z-40">
+            <Link to="/" onClick={() => setIsOpen(false)} className="block w-full hover:text-green-400">Home</Link>
+            <Link to="/about" onClick={() => setIsOpen(false)} className="block w-full hover:text-blue-400">About</Link>
+            <Link to="/community" onClick={() => setIsOpen(false)} className="block w-full hover:text-yellow-400">Community</Link>
+            <Link to="/contact" onClick={() => setIsOpen(false)} className="block w-full hover:text-yellow-400">Contact</Link>
 
-          <Link to="/wallpapers" onClick={() => setIsOpen(false)} className="block hover:text-yellow-400">Wallpapers</Link>
-          {isAdmin && (
-            <Link to="/admin" onClick={() => setIsOpen(false)} className="block hover:text-yellow-400 font-bold text-yellow-400">
-              🔒 Admin Panel
-            </Link>
-          )}
-          <button className="mt-4 w-full px-5 py-2 rounded-full bg-gradient-to-r from-green-400 to-blue-500 text-black font-semibold shadow-lg hover:scale-105 transition duration-300">
-            Join Now
-          </button>
+            <Link to="/wallpapers" onClick={() => setIsOpen(false)} className="block hover:text-yellow-400">Wallpapers</Link>
+            {isAdmin && (
+              <Link to="/admin" onClick={() => setIsOpen(false)} className="block hover:text-yellow-400 font-bold text-yellow-400">
+                🔒 Admin Panel
+              </Link>
+            )}
+            <button className="mx-4 mt-2 w-auto px-5 py-2 rounded-full bg-gradient-to-r from-green-400 to-blue-500 text-black font-semibold shadow-lg hover:scale-105 transition duration-300">
+              Join Now
+            </button>
+          </div>
         </div>
       )}
     </nav>

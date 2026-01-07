@@ -44,6 +44,8 @@ def periodic_updater():
         eventlet.sleep(3600) # Poll every hour
 
 if __name__ == '__main__':
-    print("Starting Flask-SocketIO server on http://localhost:5000")
+    import os
+    port = int(os.getenv('PORT', '5001'))
+    print(f"Starting Flask-SocketIO server on 0.0.0.0:{port}")
     eventlet.spawn(periodic_updater)
-    socketio.run(app, debug=False, host='0.0.0.0', port=5001)
+    socketio.run(app, debug=False, host='0.0.0.0', port=port)

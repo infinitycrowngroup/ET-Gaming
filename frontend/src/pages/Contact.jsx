@@ -1,5 +1,6 @@
 import "./Contact.css";
 import { useState } from "react";
+import API_BASE from "../api/apiConfig";
 
 export default function Contact() {
   const [status, setStatus] = useState(null); // 'sending', 'success', 'error'
@@ -19,7 +20,7 @@ export default function Contact() {
     };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
+      const apiUrl = API_BASE;
       const response = await fetch(`${apiUrl}/contact`, {
         method: "POST",
         headers: {

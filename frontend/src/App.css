@@ -76,13 +76,18 @@ body {
 
 /* Home hero */
 .home-hero {
-  min-height: calc(100vh - 96px);
+  /* Mobile-first: use safe viewport unit with JS fallback var(--vh) and modern 100dvh */
+  min-height: calc(var(--vh, 1vh) * 100 - 96px);
+  min-height: calc(100dvh - 96px);
   display: flex;
   align-items: center;
   justify-content: center;
   background-image: url('/assets/kartous.jpg');
   background-size: cover;
-  background-position: center center;
+  /* Favor a slightly higher focal point on mobile to keep subject visible */
+  background-position: 50% 30%;
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* avoid fixed on mobile */
   position: relative;
   color: #eaf6ff;
 }
@@ -130,6 +135,8 @@ body {
   .home-line-top { font-size: 2.6rem; }
   .home-line-center { font-size: 3.2rem; letter-spacing: 10px; }
   .home-line-brand { font-size: 3.6rem; }
+  /* Desktop: center the background and use larger focal center */
+  .home-hero { background-position: center center; min-height: calc(100vh - 96px); }
 }
 .home-logo {
   width: 160px;
@@ -150,6 +157,19 @@ body {
 .site-nav .brand {
   font-weight: 800;
   letter-spacing: 0.6px;
+}
+/* Mobile menu styling */
+.mobile-menu {
+  width: 100%;
+  left: 0;
+  box-sizing: border-box;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Prevent horizontal scrolling on small screens */
+html, body, #root {
+  overflow-x: hidden;
 }
 .site-underline {
   height: 2px;
