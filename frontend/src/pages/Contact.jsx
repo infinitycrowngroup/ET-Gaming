@@ -19,7 +19,7 @@ export default function Contact() {
     };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://et-gaming.onrender.com";
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
       const response = await fetch(`${apiUrl}/contact`, {
         method: "POST",
         headers: {

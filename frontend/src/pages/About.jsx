@@ -74,7 +74,7 @@ export default function About() {
     let socket;
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://et-gaming.onrender.com/";
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
       socket = io(apiUrl, {
         // Remove 'transports' to allow automatic upgrade from polling (fixes ERR_CONNECTION_REFUSED)
         withCredentials: true,

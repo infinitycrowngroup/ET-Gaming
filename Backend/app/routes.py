@@ -91,6 +91,7 @@ def contact():
         payload = {
             "from": from_value,
             "to": [recipient],
+            "reply_to": email,
             "subject": f"New Contact via ET Gaming: {name}",
             "text": body
         }
