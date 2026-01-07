@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="flex items-center gap-2 text-sm text-gray-400 opacity-80 hover:opacity-100 transition-opacity">
           <span>Developed by</span>
           <a
-            href="https://www.youtube.com/@thisisetgaming"
+            href="https://infinitycrown.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 font-bold text-yellow-500 hover:text-yellow-400 transition-colors"
